@@ -8,9 +8,11 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
+RUN npm install --save-dev webpack
 
-COPY --chown=node:node . .
+COPY ..
+
+COPY --chown=node:node ..
 
 USER node
 

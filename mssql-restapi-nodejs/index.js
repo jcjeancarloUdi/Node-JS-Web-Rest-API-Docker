@@ -1,11 +1,11 @@
-const express = require('express');
+﻿const express = require('express');
 const app = express();         
 const bodyParser = require('body-parser');
-const port = 3000; //porta padrão
+const port = 3000; //porta padrao
 const sql = require('mssql');
 const connStr = "Server=db1.internal.prod.jcjeancarlo.com;Database=db1;User Id=sa;Password=jcjeancarlo2017;";
 
-//fazendo a conexão global
+//fazendo a conexao global
 sql.connect(connStr)
    .then(conn => global.conn = conn)
    .catch(err => console.log(err));
@@ -23,7 +23,7 @@ app.use('/', router);
 app.listen(port);
 console.log('API funcionando!');
 
-// executará consultas SQL 
+// executar consultas SQL 
 function execSQLQuery(sqlQry, res){
     global.conn.request()
                .query(sqlQry)
@@ -65,7 +65,7 @@ router.post('/clientes', (req, res) =>{
     const id = parseInt(req.body.id);
     const nome = req.body.nome;
     const cpf = req.body.cpf;
-    execSQLQuery(`INSERT INTO Clientes(ID, Nome, CPF) VALUES(${id},'${nome}','${cpf}')`, res);
+    execSQLQuery("INSERT INTO Clientes(ID, Nome, CPF) VALUES(${id},'${nome}','${cpf}')", res);
 })
 
 // atualizando o cliente
@@ -73,7 +73,7 @@ router.patch('/clientes/:id', (req, res) =>{
     const id = parseInt(req.params.id);
     const nome = req.body.nome.substring(0,150);
     const cpf = req.body.cpf.substring(0,11);
-    execSQLQuery(`UPDATE Clientes SET Nome='${nome}', CPF='${cpf}' WHERE ID=${id}`, res);
+    execSQLQuery("UPDATE Clientes SET Nome='${nome}', CPF='${cpf}' WHERE ID=${id}", res);
 })
 
 // excluir clientes por lista 
@@ -81,10 +81,10 @@ function execute(listCpf, i, conn){
     if(!listCpf[i]) return console.log("terminou");
 
     conn.request()
-        .query(`DELETE Cllientes WHERE cpf='${listCpf[i]}'`)
+        .query("DELETE Cllientes WHERE cpf='${listCpf[i]}'")
         .then(result => {
             console.log(result)
-            execute(listCpf, ++i, conn)//faz o pr�ximo
+            execute(listCpf, ++i, conn)//faz o proximo
         })
         .catch(err => console.log(err));
 }
