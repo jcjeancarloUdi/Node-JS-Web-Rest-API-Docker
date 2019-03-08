@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sobre Docker</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700" rel="stylesheet" type="text/css">
+</head>
+<nav class="navbar navbar-dark navbar-static-top navbar-expand-md">
+    <div class="container">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"> <span class="sr-only">Toggle navigation</span>
+        </button> <a class="navbar-brand" href="#">Um pouco sobre</a>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav mr-auto">
+                <li class="nav-item"><a href="/" class="nav-link">O Docker</a>
+                </li>
+                <li class="active nav-item"><a href="/docker" class="nav-link">Container x VM</a>
+                </li>
+                <li class="nav-item"><a href="/developers" class="nav-link">Para Desenvolvedores</a>
+                </li>                
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="jumbotron text-center">
+    <h1>Informações sobre Docker</h1>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <p>
+                <div class="caption">Os contêineres são uma abstração na camada de aplicativo que agrupa código e dependências. Vários contêineres podem ser executados na mesma máquina e compartilhar o kernel do sistema operacional com outros contêineres, cada um sendo executado como processos isolados no espaço do usuário. Os contêineres ocupam menos espaço que as VMs (as imagens de contêiner geralmente têm dezenas de MBs), podem lidar com mais aplicativos e exigem menos VMs e sistemas operacionais.
+                </div>
+                <img src="https://www.docker.com/sites/default/files/d8/2018-11/docker-containerized-appliction-blue-border_2.png" alt="Docker">
+            </p>
+        </div>
+        <div class="col-lg-6">
+            <p>
+                <div class="caption">Máquinas virtuais (VMs) são uma abstração de hardware físico, transformando um servidor em vários servidores. O hypervisor permite que várias VMs sejam executadas em uma única máquina. Cada VM inclui uma cópia completa de um sistema operacional, o aplicativo, binários necessários e bibliotecas - ocupando dezenas de GBs. As VMs também podem ser lentas para inicializar</div>
+                <img src="https://www.docker.com/sites/default/files/d8/2018-11/container-vm-whatcontainer_2.png" alt="Sammy the Shark">
+            </p>
+        </div>
+    </div>
+</div>
+
+</html>
