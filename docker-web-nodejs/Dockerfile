@@ -6,11 +6,13 @@ WORKDIR /home/node/app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --quiet --production --no-progress --registry=${registry:-https://registry.npmjs.org} && \
+    npm cache clean --force && \
+	npm install --save-dev webpack
 
 COPY . .
 
-COPY --chown=node:node . .
+RUN chown -R node:node /home/node/app
 
 USER node
 

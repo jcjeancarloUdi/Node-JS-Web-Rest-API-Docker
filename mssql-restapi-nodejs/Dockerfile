@@ -1,4 +1,4 @@
-FROM node:10
+﻿FROM node:10
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
@@ -6,13 +6,13 @@ WORKDIR /home/node/app
 
 COPY package*.json ./
 
-RUN npm install
-
-RUN npm install --save-dev webpack
-
-COPY ..
-
-COPY --chown=node:node ..
+RUN npm install --quiet --production --no-progress --registry=${registry:-https://registry.npmjs.org} && \
+    npm cache clean --force && \
+	npm install --save-dev webpack
+	
+COPY . .
+	
+RUN chown -R node:node /home/node/app
 
 USER node
 
