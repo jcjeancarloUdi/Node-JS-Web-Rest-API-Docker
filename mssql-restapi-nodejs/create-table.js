@@ -1,10 +1,10 @@
-const connStr = "Server=db1.internal.prod.jcjeancarlo.com;Database=AdventureWorksDW2017;User Id=sa;Password=jcjeancarlo2017;";
+const connStr = "Server=db1.internal.prod.jcjeancarlo.com;Database=db1;User Id=sa;Password=jcjeancarlo2017;";
 const sql = require("mssql");
 
 sql.connect(connStr)
 // .then(conn => console.log("conectou!"))
    .then(conn => createTable(conn))
-   .catch(err => console.log("erro! " + err));
+   .catch(err => console.log("erro na conexão! " + err));
 
 function createTable(conn){
  

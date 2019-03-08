@@ -16,6 +16,12 @@ ENV PATH="/opt/mssql-tools/bin:${PATH}"
 
 RUN mkdir -p /var/opt/mssql/backup
 WORKDIR /var/opt/mssql/backup
+
 RUN curl -L -o AdventureWorksDW2017.bak https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorksDW2017.bak
+
+WORKDIR /
+COPY /db-scripts/create-db.sql .
+
+#RUN (sqlcmd -S localhost -U SA -P jcjeancarlo2017 -i create-db.sql)
 
 EXPOSE 1433

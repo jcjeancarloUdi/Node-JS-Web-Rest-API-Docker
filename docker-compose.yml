@@ -1,32 +1,38 @@
-version: '1'
-
+version: '3'
 services:
   db:
     build:
       context: ./docker-mssqldb/
       dockerfile: Dockerfile
+    restart: always
+    privileged: true      
     ports:
-      - "1433:1433"
+      - "1437:1433"
     environment:
-      SA_PASSWORD: "jcjeancarlo2017"
       ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "jcjeancarlo2017"
+      TZ: "Brazil/East"
     healthcheck:
-      test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P 'jcjeancarlo2017' -Q 'select distinct 1 from AdventureWorksDW2017.dbo.DimDate'
+      #test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P 'jcjeancarlo2017' -Q 'use master; create database db1;'
+      test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P jcjeancarlo2017 -i create-db.sql ||
+            sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P jcjeancarlo2017 -i create-table.sql
     networks:
       mynetwork:
         aliases:
-          - db1.internal.prod.jcjeancarlo.com
+            - db1.internal.prod.jcjeancarlo.com
+
   web:
     build:
       context: ./docker-web-nodejs/
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8088:8080"
     restart: unless-stopped
     networks:
       mynetwork:
         aliases:
-          - web1.internal.prod.jcjeancarlo.com      
+            - web1.internal.prod.jcjeancarlo.com
+          
   restapi:
     build:
       context: ./mssql-restapi-nodejs/
@@ -34,13 +40,18 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+        - db
+    healthcheck:
+        test: ["CMD", "node", "create-table.js"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
     restart: unless-stopped
     networks:
       mynetwork:
         aliases:
-          - restapi1.internal.prod.jcjeancarlo.com        
-
+            - restapi1.internal.prod.jcjeancarlo.com
+            
 networks:
   mynetwork:
     driver: bridge
