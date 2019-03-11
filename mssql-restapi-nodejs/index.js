@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = 3000; //porta padrao
 const sql = require('mssql');
-const connStr = "Server=db1.internal.prod.jcjeancarlo.com;Database=db1;User Id=sa;Password=jcjeancarlo2017;";
+const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=sa;Password=teste2017;";
 
 //fazendo a conexao global
 sql.connect(connStr)
@@ -32,36 +32,36 @@ function execSQLQuery(sqlQry, res){
 }
 
 // criar a rota de clientes
-router.get('/clientes', (req, res) =>{
+router.get('/api/v1/clientes', (req, res) =>{
     execSQLQuery('SELECT * FROM Clientes', res);
 })
 
 // criando a pesquisa de um ciente
-router.get('/clientes/:id?', (req, res) =>{
+router.get('/api/v1/clientes/:id?', (req, res) =>{
     let filter = '';
     if(req.params.id) filter = ' WHERE ID=' + parseInt(req.params.id);
     execSQLQuery('SELECT * FROM Clientes' + filter, res);
 })
 
 // criando a pesquisa de um ciente
-router.get('/clientesbycpf/:cpf?', (req, res) =>{
+router.get('/api/v1/clientesbycpf/:cpf?', (req, res) =>{
     let filter = '';
     if(req.params.cpf) filter = ' WHERE cpf=' + req.params.cpf;
     execSQLQuery('SELECT * FROM Clientes' + filter, res);
 })
 
 //excluindo um cliente pelo ID
-router.delete('/clientes/:id', (req, res) =>{
+router.delete('/api/v1/clientes/:id', (req, res) =>{
     execSQLQuery('DELETE Clientes WHERE ID=' + parseInt(req.params.id), res);
 })
 
 //excluindo um cliente pelo cpf
-router.delete('/clientesbycpf/:cpf', (req, res) =>{
+router.delete('/api/v1/clientesbycpf/:cpf', (req, res) =>{
     execSQLQuery('DELETE Clientes WHERE cpf=' + req.params.cpf, res);
 })
 
 // adicionar cliente
-router.post('/clientes', (req, res) =>{
+router.post('/api/v1/clientes', (req, res) =>{
     const id = parseInt(req.body.id);
     const nome = req.body.nome;
     const cpf = req.body.cpf;
@@ -69,7 +69,7 @@ router.post('/clientes', (req, res) =>{
 })
 
 // atualizando o cliente
-router.patch('/clientes/:id', (req, res) =>{
+router.patch('/api/v1/clientes/:id', (req, res) =>{
     const id = parseInt(req.params.id);
     const nome = req.body.nome.substring(0,150);
     const cpf = req.body.cpf.substring(0,11);
@@ -89,6 +89,6 @@ function execute(listCpf, i, conn){
         .catch(err => console.log(err));
 }
 
-router.delete('/clientesAll/:listCpf', (req, res) =>{
+router.delete('/api/v1/clientesAll/:listCpf', (req, res) =>{
     execute(listCpf,0, conn);
 })

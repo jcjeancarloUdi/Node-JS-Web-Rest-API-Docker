@@ -1,57 +1,101 @@
 version: '3'
-services:
-  db:
-    build:
-      context: ./docker-mssqldb/
-      dockerfile: Dockerfile
-    restart: always
-    privileged: true      
-    ports:
-      - "1437:1433"
-    environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "jcjeancarlo2017"
-      TZ: "Brazil/East"
-    healthcheck:
-      #test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P 'jcjeancarlo2017' -Q 'use master; create database db1;'
-      test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P jcjeancarlo2017 -i create-db.sql ||
-            sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P jcjeancarlo2017 -i create-table.sql
-    networks:
-      mynetwork:
-        aliases:
-            - db1.internal.prod.jcjeancarlo.com
 
-  web:
-    build:
-      context: ./docker-web-nodejs/
-      dockerfile: Dockerfile
-    ports:
-      - "8088:8080"
-    restart: unless-stopped
-    networks:
-      mynetwork:
-        aliases:
-            - web1.internal.prod.jcjeancarlo.com
+services:
+    db:
+        build:
+            context: ./docker-mssqldb/
+            dockerfile: Dockerfile
+            restart: always
+            privileged: true      
+            ports:
+                - "1437:1433"
+            volumes:
+                - /docker/vol/handson/docker-mssqldb/data:/var/opt/mssql
+            environment:
+                ACCEPT_EULA: "Y"
+                MSSQL_SA_PASSWORD: "teste2017"
+                TZ: "Brazil/East"
+            healthcheck:
+                test: sqlcmd -S db1.internal.prod.teste.com -U SA -P teste2017 -i create-db.sql ||
+                      sqlcmd -S db1.internal.prod.teste.com -U SA -P teste2017 -i create-table.sql
+            networks:
+                mynetwork:
+                    aliases:
+                        - db1.internal.prod.teste.com
+
+    web:
+        build:
+            context: ./docker-web-nodejs/
+            dockerfile: Dockerfile
+        ports:
+            - "8088:8080"
+        restart: unless-stopped
+        networks:
+            mynetwork:
+                aliases:
+                    - web1.internal.prod.teste.com
           
-  restapi:
-    build:
-      context: ./mssql-restapi-nodejs/
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-        - db
-    healthcheck:
-        test: ["CMD", "node", "create-table.js"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
-    restart: unless-stopped
-    networks:
-      mynetwork:
-        aliases:
-            - restapi1.internal.prod.jcjeancarlo.com
+    restapi:
+        build:
+            context: ./mssql-restapi-nodejs/
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        depends_on:
+            - db
+        healthcheck:
+            test: ["CMD", "node", "create-table.js"]
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+        restart: unless-stopped
+        networks:
+            mynetwork:
+                aliases:
+                    - restapi1.internal.prod.teste.com
+            
+    webmongo1:
+        build: 
+            context: ./docker-web-mongo/
+            dockerfile: Dockerfile
+        volumes:
+            - ./online_app:/app
+        ports:
+            - "8090:8080"
+        environment:
+            - VIRTUAL_HOST=api.quick-cashier.ga,api.quickcashier.eu
+            - VIRTUAL_PORT=8080
+        depends_on:
+            - "mongodb"      
+        networks:
+            mynetwork:
+                aliases:
+                    - webmongo1.internal.prod.teste.com
+            
+    mongodb:
+        image: mongo
+            ports:
+                - "27017:27017"            
+        networks:
+            mynetwork:
+                aliases:
+                    - mongodb1.internal.prod.teste.com
+  
+    fateapi:
+        build:
+            context: ./docker-fate-api/
+            dockerfile: Dockerfile
+        ports:
+            - "8082:8080"
+        Volumes:
+            - ./docker/vol/handson/docker-fate-api/webapps:/opt/tomcat/webapps/
+        depends_on:
+            - db            
+        networks:
+            mynetwork:
+                aliases:
+                    - fateapi.internal.prod.teste.com
             
 networks:
-  mynetwork:
-    driver: bridge
+    mynetwork:
+        driver: bridge

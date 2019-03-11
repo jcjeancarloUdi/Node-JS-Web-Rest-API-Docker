@@ -22,6 +22,6 @@ RUN curl -L -o AdventureWorksDW2017.bak https://github.com/Microsoft/sql-server-
 WORKDIR /
 COPY /db-scripts/create-db.sql .
 
-#RUN (sqlcmd -S localhost -U SA -P jcjeancarlo2017 -i create-db.sql)
+#RUN (sqlcmd -S localhost -U SA -P teste2017 -i create-db.sql)
 
 EXPOSE 1433

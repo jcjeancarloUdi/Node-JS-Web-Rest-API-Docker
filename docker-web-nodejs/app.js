@@ -23,6 +23,10 @@ router.get("/developers",function(req,res){
   res.sendFile(path + "developers.html");
 });
 
+router.get("/clientes",function(req,res){
+  res.sendFile(path + "clientes.html");
+});
+
 app.use(express.static(path));
 app.use("/", router);
 
