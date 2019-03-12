@@ -1,7 +1,7 @@
 const express = require("express");
 const sql = require("mssql");
 
-const connStr = "Server=db1.internal.teste.com;Database=db1;User Id=sa;Password=teste2017;";
+const connStr = "Server=db1.internal.teste.com;Database=db1;User Id=usr_app;Password=usr_app;";
 const router = express.Router();
 
 function createTable(conn, res){

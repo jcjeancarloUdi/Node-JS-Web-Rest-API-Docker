@@ -1,5 +1,9 @@
 USE MASTER
 GO
+USE [master]
+GO
+CREATE LOGIN [usr_app] WITH PASSWORD=N'usr_app', DEFAULT_DATABASE=[master], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+GO
 CREATE DATABASE [db1]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -66,3 +70,15 @@ GO
 USE [master]
 GO
 CREATE DATABASE [db2]
+
+USE [db1]
+GO
+if NOT exists(select top 1 1 from sysusers where name like 'usr_app')
+	BEGIN
+		CREATE USER [usr_app] FOR LOGIN [usr_app]
+		ALTER ROLE [db_owner] ADD MEMBER [usr_app]
+	END
+ELSE
+	BEGIN
+		EXEC SP_CHANGE_USERS_LOGIN 'UPDATE_ONE','usr_app','usr_app';
+	END

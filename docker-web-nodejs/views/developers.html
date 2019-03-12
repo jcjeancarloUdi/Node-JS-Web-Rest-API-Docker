@@ -30,34 +30,386 @@
 </nav>
 <div class="jumbotron">
     <div class="container">
-        <h1>Conhece o Dockerfile e Docker-Compose?</h1>
+        <h1>Exemplos de Dockerfile, Docker-Compose e principais comandos?</h1>
     </div>
 </div>
 <div class="container">
     <div class="row">
-        <div class="column">
-                <h3>DockerFile para MSSQL</h3>
-            <img src="images/dockerfile-mssql.JPG" alt="mssql" style="width:100%">
+        <article class="post">
+        <h2 id="sumário">Sumário</h2>
+        <ul>
+          <li><a href="#dockerfile">Dockerfile?</a></li>
+          <li><a href="#docker-compose">Docker Compose?</a></li>
+          <li><a href="#Comoeuseiquaisasimagensdisponveisnomeurepositriolocal">Quais imagens estão disponíveis no meu repositório local?</a></li>
+          <li><a href="#Comoadicionarimagenslocais">Como adicionar imagens locais?</a></li>
+          <li><a href="#Comoremoverimagenslocais">Como remover imagens locais?</a></li>
+          <li><a href="#Criarumcontainer">Criar um container</a></li>
+          <li><a href="#CriarumcontainereentrarnoTerminal">Criar um container e entrar no Terminal</a></li>
+          <li><a href="#Criarumcontainercomumapelido">Criar um container com um apelido</a></li>
+          <li><a href="#VerificaroestadoouencontraroIDdeumcontainer">Verificar o estado ou encontrar o ID de um container</a></li>
+          <li><a href="#Removerumcontainer">Remover um container</a></li>
+          <li><a href="#OutrasinformaesteisqueoDockerpodenospassarsobreocontainer">Outras informações úteis que o Docker pode nos passar sobre o container</a></li>
+          <li><a href="#Commitaralteraesemumaimagem">Commitar alterações em uma imagem</a></li>
+          <li><a href="#Mapeandoumaportaparaocontainer">Mapeando uma porta para o container</a></li>
+          <li><a href="#Montarcontainersautodestrutivos">Montar containers auto destrutivos</a></li>
+          <li><a href="#Executandocontainersemsegundoplano">Executando containers em segundo plano</a></li>
+          <li><a href="#Removendotodososcontainerseimagensdeumasvez">Removendo todos os containers e imagens de uma só vez</a></li>
+          <li><a href="#Comoexecutarcomandossemprecisarestardentrodocontainer">Como executar comandos, sem precisar estar dentro do container?</a></li>
+        </ul>
+        <h2 id="dockerfile">
+                <a name="dockerfile"></a>Dockerfile?</h2>
+                
+                <p>Utilize o Dockerfile para construir <code class="highlighter-rouge">images</code>, exemplo imagem MSSQL:</p>
+                
+                <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight">
+<code><h8>FROM microsoft/mssql-server-linux:latest
+
+RUN apt-get update && apt-get install -y  \
+    curl \
+    apt-transport-https
+
+# https://docs.microsoft.com/en-us/sql/connect/odbc/linux/installing-the-microsoft-odbc-driver-for-sql-server-on-linux
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+
+RUN apt-get install -y locales \
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen
+
+ENV PATH="/opt/mssql-tools/bin:${PATH}"
+
+RUN mkdir -p /var/opt/mssql/backup
+WORKDIR /var/opt/mssql/backup
+
+RUN curl -L -o AdventureWorksDW2017.bak \
+https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorksDW2017.bak
+
+WORKDIR /
+COPY /db-scripts/create-db.sql .
+
+#RUN (sqlcmd -S localhost -U SA -P teste2017 -i create-db.sql)
+
+EXPOSE 1433                    
+</h8></code></pre></div></div>
+
+<h2 id="docker-compose">
+        <a name="docker-compose"></a>Docker Compose?</h2>
+        
+        <p>Utilize o Docker Compose para orquestrar <code class="highlighter-rouge">contêineres</code>, exemplo compose file:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight">
+<code><h8>version: '3'
+services:
+  db:
+    build:
+        context: ./docker-mssqldb/
+        dockerfile: Dockerfile
+    restart: always
+    privileged: true      
+    ports:
+        - "1437:1433"
+    volumes:
+        - /docker/vol/handson/docker-mssqldb/data:/var/opt/mssql
+    environment:
+        ACCEPT_EULA: "Y"
+        MSSQL_SA_PASSWORD: "teste2017"
+        TZ: "Brazil/East"
+    healthcheck:
+        test: sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-db.sql ||
+            sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-table.sql
+    networks:
+        mynetwork:
+        aliases:
+            - db1.internal.teste.com            
+  web:
+    build:
+        context: ./docker-web-nodejs/
+        dockerfile: Dockerfile
+    ports:
+        - "8088:8080"
+    restart: unless-stopped
+    depends_on:
+        - db
+    networks:
+        mynetwork:
+        aliases:
+            - web1.internal.teste.com 
+  nodeapi:
+    build:
+        context: ./mssql-restapi-nodejs/
+        dockerfile: Dockerfile
+    ports:
+        - "3000:3000"
+    volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+    depends_on:
+        - db
+    healthcheck:
+        test: ["CMD", "node", "create-table.js"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+    restart: unless-stopped
+
+networks:
+    mynetwork:
+    aliases:
+        - restapi1.internal.teste.com 
+        networks:
+        mynetwork:
+            driver: bridge                                                   
+</h8></code></pre></div></div>
+                        
+        <h2 id="como-eu-sei-quais-as-imagens-disponíveis-no-meu-repositório-local">
+        <a name="Comoeuseiquaisasimagensdisponveisnomeurepositriolocal"></a>Quais imagens estão disponíveis no meu repositório local?</h2>
+        
+        <p>Utilize o comando <code class="highlighter-rouge">images</code> para listar:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker images
+        </code></pre></div></div>
+        
+        <p>Será apresentado uma tabela no seu Terminal com:</p>
+        
+        <ul>
+          <li>
+        <strong>REPOSITORY</strong> - repositório</li>
+          <li>
+        <strong>TAG</strong> - a tag utilizada no repositório (é setado pelo mantenedor)</li>
+          <li>
+        <strong>IMAGE ID</strong> - o ID da Imagem</li>
+          <li>
+        <strong>CREATED</strong> - quando essa imagem foi criada</li>
+          <li>
+        <strong>SIZE</strong> - tamanho dessa imagem</li>
+        </ul>
+        
+        <h2 id="como-adicionar-imagens-locais">
+        <a name="Comoadicionarimagenslocais"></a>Como adicionar imagens locais?</h2>
+        
+        <p>Utilize o comando <code class="highlighter-rouge">search</code> para procurar a imagem e o comando <code class="highlighter-rouge">pull</code> para baixar:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker search ubuntu
+        </code></pre></div></div>
+        
+        <p>Encontrado a imagem correta, utilize <code class="highlighter-rouge">pull</code> com o nome dessa imagem:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull ubuntu
+        </code></pre></div></div>
+        
+        <h2 id="como-remover-imagens-locais">
+        <a name="Comoremoverimagenslocais"></a>Como remover imagens locais?</h2>
+        
+        <p>Localize o ID ou nome do repositório com o comando <code class="highlighter-rouge">docker images</code>.</p>
+        
+        <p>Com o id ou o nome do repositório em mãos, utilize o comando <code class="highlighter-rouge">rmi</code> para excluir as imagens.</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker rmi ID_ou_nome_da_imagem
+        </code></pre></div></div>
+        
+        <h2 id="criar-um-container">
+        <a name="Criarumcontainer"></a>Criar um container</h2>
+        
+        <p>Para executar um container utilize o comando <code class="highlighter-rouge">run</code> com o nome da imagem que vá utilizar para a criação:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run nome_da_imagem
+        </code></pre></div></div>
+        
+        <h2 id="criar-um-container-e-entrar-no-terminal">
+        <a name="CriarumcontainereentrarnoTerminal"></a>Criar um container e entrar no Terminal</h2>
+        
+        <p>Conseguimos criar um container e já entrar nesse container com o comando <code class="highlighter-rouge">-it</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> ubuntu /bin/bash
+        </code></pre></div></div>
+        
+        <p>Vai subir um container com o Ubuntu e entrar no Bash.</p>
+        
+        <p>O <code class="highlighter-rouge">-i</code> significa interatividade e o <code class="highlighter-rouge">-t</code> que queremos um link com o Terminal do container.</p>
+        
+        <h2 id="criar-um-container-com-um-apelido">
+        <a name="Criarumcontainercomumapelido"></a>Criar um container com um apelido</h2>
+        
+        <p>Você pode colocar apelidos nos containers para facilitar sua organização passando por parâmetro o <code class="highlighter-rouge">--name</code> para o comando <code class="highlighter-rouge">docker run</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--name</span> ubuntinho ubuntu
+        </code></pre></div></div>
+        
+        <p>Perceba que logo depois do parâmetro <code class="highlighter-rouge">--name</code> vem o nome que deseja e o nome da imagem que vai ser utilizada para gerar o container.</p>
+        
+        <p>Nesse caso a imagem <code class="highlighter-rouge">ubuntu</code> e o alias <code class="highlighter-rouge">ubuntinho</code>.</p>
+        
+        <h2 id="verificar-o-estado-ou-encontrar-o-id-de-um-container">
+        <a name="VerificaroestadoouencontraroIDdeumcontainer"></a>Verificar o estado ou encontrar o ID de um container</h2>
+        
+        <p>Você consegue uma lista dos containers ativos com o comando <code class="highlighter-rouge">ps</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps
+        </code></pre></div></div>
+        
+        <p>Vai aparecer uma tabela com</p>
+        
+        <ul>
+          <li>
+        <strong>CONTAINER ID</strong> - ID do container</li>
+          <li>
+        <strong>IMAGE</strong> - a imagem que foi utilizada para gerar esse container</li>
+          <li>
+        <strong>COMMAND</strong> - o comando passado como parâmetro para esse container (exemplo o /bin/bash)</li>
+          <li>
+        <strong>CREATED</strong> - a data da criação do container</li>
+          <li>
+        <strong>STATUS</strong> - o estado do container (parado ou em funcionamento)</li>
+          <li>
+        <strong>PORTS</strong> - as portas compartilhadas entre host e container</li>
+          <li>
+        <strong>NAMES</strong> - e o nome que você deu ao container, se o fez</li>
+        </ul>
+        
+        <p>O <code class="highlighter-rouge">ps</code> só vai mostrar os containers que estão em atividade, para verificar todos os containers criados, incluindo os que estiverem parados, utilize o <code class="highlighter-rouge">ps -a</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker ps <span class="nt">-a</span>
+        </code></pre></div></div>
+        
+        <p>Para pegar apenas o ID do container do topo da tabela, utilize o comando <code class="highlighter-rouge">ps -qa</code></p>
+        
+        <h2 id="remover-um-container">
+        <a name="Removerumcontainer"></a>Remover um container</h2>
+        
+        <p>Remover um container seria o mesmo que desligar a máquina virtual.</p>
+        
+        <p>Utilize o comando <code class="highlighter-rouge">rm</code> para remover o container com o ID que você pode pegar com o <code class="highlighter-rouge">docker ps</code> ou o apelido que você escolheu:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">rm </span>id_ou_apelido
+        </code></pre></div></div>
+        
+        <h2 id="outras-informações-úteis-que-o-docker-pode-nos-passar-sobre-o-container">
+        <a name="OutrasinformaesteisqueoDockerpodenospassarsobreocontainer"></a>Outras informações úteis que o Docker pode nos passar sobre o container</h2>
+        
+        <p>Informações de uso de Hardware do container:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stats id_ou_apelido
+        </code></pre></div></div>
+        
+        <p>Veremos informações como:</p>
+        
+        <ul>
+          <li>
+        <strong>CONTAINER</strong> - ID do Container</li>
+          <li>
+        <strong>CPU %</strong> - uso de CPU em porcentagem</li>
+          <li>
+        <strong>MEM USAGE / LIMIT</strong> - Memória usada/Limite que você pode ter setado</li>
+          <li>
+        <strong>MEM</strong> - uso de memória em porcentagem</li>
+          <li>
+        <strong>NET I/O</strong> - I/O de Internet</li>
+          <li>
+        <strong>BLOCK IO</strong> - Outros processos de I/O.</li>
+        </ul>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker inspect id_ou_apelido
+        </code></pre></div></div>
+        
+        <p>Esse comando trás muita informação útil, então é bom dar uma olhada na <a href="https://docs.docker.com/engine/reference/commandline/inspect/">documentação oficial</a> para não se perder pelas linhas!</p>
+        
+        <h2 id="commitar-alterações-em-uma-imagem">
+        <a name="Commitaralteraesemumaimagem"></a>Commitar alterações em uma imagem</h2>
+        
+        <p>As alterações que você faz em um container, durante sua execução, não são salvas, a menos que você gere uma nova imagem com base nesse container.</p>
+        
+        <p>Para commitar o que você fez em uma imagem, utilize o comando <code class="highlighter-rouge">commit</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker commit ID/apelido nome_da_nova_imagem
+        </code></pre></div></div>
+        
+        <p>Ele vai gerar uma nova imagem a partir desse commit.</p>
+        
+        <h2 id="mapeando-uma-porta-para-o-container">
+        <a name="Mapeandoumaportaparaocontainer"></a>Mapeando uma porta para o container</h2>
+        
+        <p>Usamos o comando <code class="highlighter-rouge">-p</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">-p</span> 8080:80 ubuntu
+        </code></pre></div></div>
+        
+        <p>Bem útil para listar uma porta para um servidor web:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">-p</span> 8080:80 nginx
+        </code></pre></div></div>
+        
+        <p>Estamos informando que a porta 8080 no Host é aberta e deve ser mapeada na porta 80 do container.</p>
+        
+        <h2 id="montar-containers-auto-destrutivos">
+        <a name="Montarcontainersautodestrutivos"></a>Montar containers auto destrutivos</h2>
+        
+        <p>Usando o comando <code class="highlighter-rouge">--rm</code>, podemos montar containers que se destroem ao sairmos da sessão.</p>
+        
+        <p>Exemplo utilizando o <a href="https://www.nginx.com/">NGINX</a>.</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">--rm</span> <span class="nt">-p</span> 8080:80 nginx /bin/bash
+        </code></pre></div></div>
+        
+        <p>Ao usar um <code class="highlighter-rouge">exit</code> para sair do Terminal do SO rodando no container, o mesmo será removido.</p>
+        
+        <h2 id="executando-containers-em-segundo-plano">
+        <a name="Executandocontainersemsegundoplano"></a>Executando containers em segundo plano</h2>
+        
+        <p>Podemos executar o container e deixar ele em segundo plano, sem precisar ficar conectado pelo Shell, com o comando <code class="highlighter-rouge">-d</code>.</p>
+        
+        <p>Exemplo utilizando o NGINX.</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">-p</span> 8080:80 nginx /usr/sbin/nginx <span class="nt">-g</span>
+        </code></pre></div></div>
+        
+        <p>Para controlar esse container usamos os comandos <code class="highlighter-rouge">stop</code> e <code class="highlighter-rouge">start</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop id_ou_apelido
+        </code></pre></div></div>
+        
+        <p>Para parar e:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker start id_ou_apelido
+        </code></pre></div></div>
+        
+        <p>Para ativar o container.</p>
+        
+        <h2 id="removendo-todos-os-containers-e-imagens-de-uma-só-vez">
+        <a name="Removendotodososcontainerseimagensdeumasvez"></a>Removendo todos os containers e imagens de uma só vez</h2>
+        
+        <p>Usamos um pouquinho de <a href="https://aurelio.net/shell/">Shell Script</a> e conseguimos automatizar o processo de remoção de todos os containers ativos com:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">rm</span> <span class="k">$(</span>docker ps <span class="nt">-qa</span><span class="k">)</span>
+        </code></pre></div></div>
+        
+        <p>Para entender o que o <code class="highlighter-rouge">$(docker ps -qa)</code> está fazendo, execute somente esse comando no Terminal e veja o retorno.</p>
+        
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$(docker ps -qa)
+        </code></pre></div></div>
+        
+        <p>Para imagens</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker rmi <span class="k">$(</span>docker images <span class="nt">-q</span><span class="k">)</span>
+        </code></pre></div></div>
+        
+        <h2 id="como-executar-comandos-sem-precisar-estar-dentro-do-container">
+        <a name="Comoexecutarcomandossemprecisarestardentrodocontainer"></a>Como executar comandos, sem precisar estar dentro do container?</h2>
+        
+        <p>Para não precisar acessar um container para executar comandos basicos, podemos usar o <code class="highlighter-rouge">exec</code>:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> id_ou_apelido comando
+        </code></pre></div></div>
+        
+        <p>Ex.:</p>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> ubuntinho ifconfig eth0
+        </code></pre></div></div>
+        
+        <p>Vai retornar o endereço de IP do container.</p>
+        
         </div>
-        <div class="column">
-                <h3>DockerFile para Node</h3>
-            <img src="images/dockerfile-web.JPG" alt="web" style="width:100%">
-        </div>
-    </div>
-    <div class="row">
-        <div class="column">
-                <h3>Docker Compose</h3>
-            <img src="images/docker-compose.JPG" alt="compose" style="width:100%">
-        </div>
-        <div class="column">
-            <img src="images/docker-compose2.JPG" alt="compose2" style="width:100%">
-        </div>
-        <div class="column">
-            <img src="images/docker-compose3.JPG" alt="compose3" style="width:100%">
-        </div>
-        <div class="column">
-            <img src="images/docker-compose4.JPG" alt="compose4" style="width:100%">
-        </div>        
+        
+        </article>        
     </div>    
 </div>
 <div class="jumbotron">
