@@ -3,12 +3,12 @@ const bodyParser = require("body-parser");
 const sql = require("mssql");
 const app = express();
 const port = 3000; //porta padrao
-const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=sa;Password=teste2017;";
+const connStr = "Server=db1.internal.teste.com;Database=db1;User Id=sa;Password=teste2017;";
 
 //fazendo a conexao global
-sql.connect(connStr)
-   .then(conn => global.conn = conn)
-   .catch(err => console.log(err));
+//sql.connect(connStr)
+//   .then(conn => global.conn = conn)
+//   .catch(err => console.log(err));
 
 //configurando o body parser para pegar POSTS mais tarde
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,10 +31,17 @@ console.log('API funcionando!');
 
 // executar consultas SQL 
 function execSQLQuery(sqlQry, res){
-    global.conn.request()
-               .query(sqlQry)
-               .then(result => res.json(result.recordset))
-               .catch(err => res.json(err));
+	new sql.ConnectionPool(connStr).connect().then(pool => {
+			return pool.request().query(sqlQry)
+			}).then(result => {
+			  let rows = result.recordset
+			  res.setHeader('Access-Control-Allow-Origin', '*')
+			  res.status(200).json(rows);
+			  sql.close();
+			}).catch(err => {
+			  res.status(500).send({ message: {err}})
+			  sql.close();
+			});	
 }
 
 // criar a rota de clientes

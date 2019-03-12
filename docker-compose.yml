@@ -15,13 +15,12 @@ services:
       MSSQL_SA_PASSWORD: "teste2017"
       TZ: "Brazil/East"
     healthcheck:
-      #test: sqlcmd -S db1.internal.prod.teste.com -U SA -P 'teste2017' -Q 'use master; create database db1;'
-      test: sqlcmd -S db1.internal.prod.teste.com -U SA -P teste2017 -i create-db.sql ||
-            sqlcmd -S db1.internal.prod.teste.com -U SA -P teste2017 -i create-table.sql
+      test: sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-db.sql ||
+            sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-table.sql
     networks:
       mynetwork:
         aliases:
-            - db1.internal.prod.teste.com            
+            - db1.internal.teste.com            
   web:
     build:
       context: ./docker-web-nodejs/
@@ -34,17 +33,16 @@ services:
     networks:
       mynetwork:
         aliases:
-            - web1.internal.prod.teste.com
-  node-api:
+            - web1.internal.teste.com 
+  nodeapi:
     build:
       context: ./mssql-restapi-nodejs/
       dockerfile: Dockerfile
-      command: npm run start
     ports:
       - "3000:3000"
     volumes:
         - .:/usr/src/app
-	- /usr/src/app/node_modules
+        - /usr/src/app/node_modules
     depends_on:
         - db
     healthcheck:
@@ -56,7 +54,7 @@ services:
     networks:
       mynetwork:
         aliases:
-            - restapi1.internal.prod.teste.com
+            - restapi1.internal.teste.com 
   mongodb:
         image: mongo
         ports:
@@ -66,7 +64,7 @@ services:
         networks:
             mynetwork:
                 aliases:
-                    - mongodb1.internal.prod.teste.com
+                    - mongodb1.internal.teste.com 
   webmongo1:
         build: 
             context: ./docker-web-mongo/
@@ -80,7 +78,7 @@ services:
         networks:
             mynetwork:
                 aliases:
-                    - webmongo1.internal.prod.teste.com
+                    - webmongo1.internal.teste.com 
 
   fateapi:
         build:
@@ -96,7 +94,7 @@ services:
         networks:
             mynetwork:
                 aliases:
-                    - fateapp.internal.prod.teste.com                      
+                    - fateapp.internal.teste.com                      
 networks:
   mynetwork:
     driver: bridge            

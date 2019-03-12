@@ -1,7 +1,7 @@
 const express = require("express");
 const sql = require("mssql");
 
-const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=sa;Password=teste2017;";
+const connStr = "Server=db1.internal.teste.com;Database=db1;User Id=sa;Password=teste2017;";
 const router = express.Router();
 
 function createTable(conn){
@@ -45,13 +45,17 @@ function createTable(conn){
 
     const request = new sql.Request()
     request.bulk(table)
-           .then(result => console.log('Tabela de Clientes Criada com sucesso.'))
-           .catch(err => console.log('erro no bulk. ' + err));
+           .then(result => res.status(200).send({ message: {"Tabela de Clientes Criada com sucesso."}}))
+           .catch(err => res.status(500).send({ message: {err}}));
+	conn.close;
 }
 
 // criar a rota de clientes
 router.get('/clientes', (req, res) =>{
-    createTable(conn);
+	sql.connect(connStr)
+   .then(conn => createTable(conn, res))
+   .catch(err => console.log(err));
+    //createTable(sql.ConnectionPool(connStr).connect());
 })
 
 module.exports = app => app.use('/database/create-table', router);
