@@ -12,17 +12,16 @@ services:
         - /docker/vol/handson/docker-mssqldb/data:/var/opt/mssql
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "jcjeancarlo2017"
+      MSSQL_SA_PASSWORD: "teste2017"
       TZ: "Brazil/East"
     healthcheck:
-      #test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P 'jcjeancarlo2017' -Q 'use master; create database db1;'
-      test: sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P jcjeancarlo2017 -i create-db.sql ||
-            sqlcmd -S db1.internal.prod.jcjeancarlo.com -U SA -P jcjeancarlo2017 -i create-table.sql
+      #test: sqlcmd -S db1.internal.prod.teste.com -U SA -P 'teste2017' -Q 'use master; create database db1;'
+      test: sqlcmd -S db1.internal.prod.teste.com -U SA -P teste2017 -i create-db.sql ||
+            sqlcmd -S db1.internal.prod.teste.com -U SA -P teste2017 -i create-table.sql
     networks:
       mynetwork:
         aliases:
-            - db1.internal.prod.jcjeancarlo.com            
-            
+            - db1.internal.prod.teste.com            
   web:
     build:
       context: ./docker-web-nodejs/
@@ -30,16 +29,22 @@ services:
     ports:
       - "8088:8080"
     restart: unless-stopped
+    depends_on:
+        - db
     networks:
       mynetwork:
         aliases:
-            - web1.internal.prod.jcjeancarlo.com
-  restapi:
+            - web1.internal.prod.teste.com
+  node-api:
     build:
       context: ./mssql-restapi-nodejs/
       dockerfile: Dockerfile
+      command: npm run start
     ports:
       - "3000:3000"
+    volumes:
+        - .:/usr/src/app
+	- /usr/src/app/node_modules
     depends_on:
         - db
     healthcheck:
@@ -51,7 +56,7 @@ services:
     networks:
       mynetwork:
         aliases:
-            - restapi1.internal.prod.jcjeancarlo.com
+            - restapi1.internal.prod.teste.com
   mongodb:
         image: mongo
         ports:

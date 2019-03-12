@@ -1,8 +1,7 @@
 const sql = require("mssql");
 
 module.exports = {
-    //const connStr = "Server=db1.internal.prod.myteste.com;Database=db1;User Id=sa;Password=myteste2019;";
-    connStr: function(){ return "Server=10.100.0.24;Database=db1;User Id=usr_app;Password=usr_app;";},
+    const connStr = "Server=db1.internal.prod.myteste.com;Database=db1;User Id=sa;Password=teste2017;";
     sql: function(){ 
 
         sql.connect(connStr)

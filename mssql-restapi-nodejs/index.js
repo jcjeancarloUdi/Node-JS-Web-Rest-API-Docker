@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const sql = require("mssql");
 const app = express();
 const port = 3000; //porta padrao
-const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=usr_app;Password=usr_app;";
+const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=sa;Password=teste2017;";
 
 //fazendo a conexao global
 sql.connect(connStr)
