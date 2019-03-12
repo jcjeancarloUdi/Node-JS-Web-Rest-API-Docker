@@ -10,7 +10,9 @@ RUN npm install --quiet --production --no-progress --registry=${registry:-https:
     npm cache clean --force && \
 	npm install --save-dev webpack && \
     npm install --save-dev nodemon && \
-    npm install express --save
+    npm install express --save && \
+	npm install body-parser --save && \
+	npm install mssql --save	
 	
 COPY . .
 	
