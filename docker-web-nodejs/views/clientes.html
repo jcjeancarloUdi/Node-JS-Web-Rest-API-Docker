@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Lista de Clientes</title>
+
+<head>
+    <title>Clientes</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -18,7 +19,7 @@
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item"><a href="/" class="nav-link">O Docker</a>
                     </li>
-                    <li class="nav-item"><a href="/docker" class="nav-link">Container x VM</a>
+                    <li class="nav-item"><a href="/docker" class="nav-link">Informações</a>
                     </li>
                     <li class="nav-item"><a href="/developers" class="nav-link">Para Desenvolvedores</a>
                     </li>
@@ -28,10 +29,28 @@
             </div>
         </div>
     </nav>
+    <div class="jumbotron">
+        <div class="container">
+            <h3>Vamos ver o retorno de uma API com uma lista de clientes.</h3>
+            <br>
+            <p><a class="btn btn-success btn-lg" href="/clientes" role="button">Carregar</a>
+            </p>                
+        </div>
+    </div>    
   <div class="container">
-    <h1>Lista de Clientes</h1>
     <ul id="clientes">
     </ul>
+    <br>
+    <p>Lista de Serviços</p>    
+    <ul class="list-group">
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://restapi1.internal.prod.teste.com:3000/api/vi/clientes" role="button">Rest-API-SQL</a></li>
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://restapi1.internal.prod.teste.com:3000/api/vi/clientes" role="button">Start-Rest-API-SQL</a></li>
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://webmongo1.internal.prod.teste.com:8090/tasks" role="button">Web-Mongo</a></li>
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://fateapi.internal.prod.teste.com:8082/" role="button">Fate-API</a></li>
+    </ul>    
+    <br>
+    <p><a class="btn btn-default btn-lg" href="/" role="button">Clique aqui para voltar</a>
+    </p>    
   </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
@@ -40,7 +59,7 @@
     .then(response => criaListaDinamica(response.data))
     .catch(error => console.log(error))
   const criaListaDinamica = ( clientes ) => {
-    console.log("inicia da busca clientes");
+    console.log("Inicia da busca clientes");
     const ulClientes = document.getElementById('clientes')
     clientes.map(cliente => {
       const listaCliente = document.createElement('li')

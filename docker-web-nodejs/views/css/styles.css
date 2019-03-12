@@ -1,12 +1,14 @@
 .navbar {
     margin-bottom: 0;
-    background: #000000;
+    background: #077CBC;
+    box-shadow: 0 1px 13px rgba(0,0,0,0.24);
 }
 
 body {
-    background: #000000;
-    color: #ffffff;
-    font-family: 'Merriweather', sans-serif;
+    background-color: #fff;
+    color: #5a5a5a;
+    font-family: "Open Sans",sans-serif;
+    font-size: 14px;
 }
 
 h1,
@@ -16,7 +18,8 @@ h2 {
 
 p {
     font-size: 16px;
-    color: #ffffff;
+    color: #5a5a5a;
+    font-family: "Open Sans",sans-serif;
 }
 
 .jumbotron {
