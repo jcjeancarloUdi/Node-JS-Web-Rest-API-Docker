@@ -4,7 +4,7 @@ const sql = require("mssql");
 const connStr = "Server=db1.internal.teste.com;Database=db1;User Id=sa;Password=teste2017;";
 const router = express.Router();
 
-function createTable(conn){
+function createTable(conn, res){
  
     const table = new sql.Table('Clientes');
     table.create = true;
@@ -45,9 +45,14 @@ function createTable(conn){
 
     const request = new sql.Request()
     request.bulk(table)
-           .then(result => res.status(200).send({ message: {"Tabela de Clientes Criada com sucesso."}}))
-           .catch(err => res.status(500).send({ message: {err}}));
-	conn.close;
+		.then(result => {
+          res.setHeader('Access-Control-Allow-Origin', '*')
+          res.status(200).json("{ message: {'Tabela de Clientes Criada com sucesso.'}}");
+          sql.close();
+        }).catch(err => {
+          res.status(500).send({ message: {err}})
+          sql.close();
+        });		   
 }
 
 // criar a rota de clientes
