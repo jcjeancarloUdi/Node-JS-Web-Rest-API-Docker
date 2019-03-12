@@ -1,0 +1,203 @@
+{
+	"id": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+	"name": "NodeJS-mssql-local",
+	"description": "",
+	"order": [
+		"975a38ec-aee5-085c-cd0a-6d539f6bf74d",
+		"aa8d961e-4439-7e1f-aa05-853f4e2c590d",
+		"da092f0d-704b-34ee-82fd-ce5660f6d252",
+		"734c13c1-37bc-c931-8532-6167d55339d7",
+		"7374389d-4dfa-abe6-d584-eb8b499eba33",
+		"670e40c0-a4a5-0ee2-3ed0-7398ca4a8108"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1552004422772,
+	"owner": "3313393",
+	"public": false,
+	"requests": [
+		{
+			"id": "670e40c0-a4a5-0ee2-3ed0-7398ca4a8108",
+			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/api/v1/clientes/1",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PATCH",
+			"data": [
+				{
+					"key": "nome",
+					"value": "JEAN",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "cpf",
+					"value": "99112878073",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1552349452554,
+			"name": "Atualizando Clientes",
+			"description": "",
+			"collectionId": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+			"responses": []
+		},
+		{
+			"id": "734c13c1-37bc-c931-8532-6167d55339d7",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/api/v1/clientesbycpf/20848480830",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "DELETE",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1552349394604,
+			"name": "Excluir Cliente por CPF",
+			"description": "",
+			"collectionId": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+			"responses": []
+		},
+		{
+			"id": "7374389d-4dfa-abe6-d584-eb8b499eba33",
+			"headers": "Content-Type: application/x-www-form-urlencoded\nAccept-Charset: utf-8\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Accept-Charset",
+					"value": "utf-8",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/api/v1/clientes",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "id",
+					"value": "99",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "nome",
+					"value": "TESTE",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "cpf",
+					"value": "99112878073",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1552349390664,
+			"name": "Incluir Clientes",
+			"description": "",
+			"collectionId": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+			"responses": []
+		},
+		{
+			"id": "975a38ec-aee5-085c-cd0a-6d539f6bf74d",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/api/v1/clientes",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1552349223251,
+			"name": "Lista Clientes",
+			"description": "Lista Clientes\nhttp://localhost:3000/clientes",
+			"collectionId": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+			"responses": []
+		},
+		{
+			"id": "aa8d961e-4439-7e1f-aa05-853f4e2c590d",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/api/v1/clientes/1",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1552349362140,
+			"name": "Lista por Cliente",
+			"description": "",
+			"collectionId": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+			"responses": []
+		},
+		{
+			"id": "da092f0d-704b-34ee-82fd-ce5660f6d252",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/api/v1/clientesbycpf/20848480830",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1552349397349,
+			"name": "Lista Cliente por CPF",
+			"description": "",
+			"collectionId": "f5df97bb-7bfc-5fef-ca30-33b32058347f",
+			"responses": []
+		}
+	]
+}

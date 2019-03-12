@@ -1,10 +1,8 @@
-const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=sa;Password=teste2017;";
+const express = require("express");
 const sql = require("mssql");
 
-sql.connect(connStr)
-// .then(conn => console.log("conectou!"))
-   .then(conn => createTable(conn))
-   .catch(err => console.log("erro na conexão! " + err));
+const connStr = "Server=db1.internal.prod.teste.com;Database=db1;User Id=usr_app;Password=usr_app;";
+const router = express.Router();
 
 function createTable(conn){
  
@@ -50,3 +48,10 @@ function createTable(conn){
            .then(result => console.log('Tabela de Clientes Criada com sucesso.'))
            .catch(err => console.log('erro no bulk. ' + err));
 }
+
+// criar a rota de clientes
+router.get('/clientes', (req, res) =>{
+    createTable(conn);
+})
+
+module.exports = app => app.use('/database/create-table', router);
