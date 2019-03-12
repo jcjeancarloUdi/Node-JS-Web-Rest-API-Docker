@@ -1,13 +1,27 @@
-var express = require('express');
-var app = express();
+var express = require('express'),
+  app = express(),
+  port = process.env.PORT || 3000,
+  mongoose = require('mongoose'),
+  Task = require('./api/models/todoListModel'), //created model loading here
+  bodyParser = require('body-parser');
+  
+// mongoose instance connection url connection
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://mongodb1.internal.prod.teste.com:27017");
 
-var db = require('mongoose');
-db.connect("mongodb://mongodb1.internal.prod.teste.com:27017");
 
-app.get('/', function(req, res){
-  res.send("Hello World!<br>\nHola Mundo!<br>\n");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+
+var routes = require('./api/routes/todoListRoutes'); //importing route
+routes(app); //register the route
+
+
+app.listen(port);
+
+app.use(function(req, res) {
+  res.status(404).send({url: req.originalUrl + ' not found'})
 });
 
-app.listen(8080, function(){
-  console.log('Node app listening on port 8080!');
-});
+console.log('Servidor de API RESTful de lista de tarefas iniciado em: ' + port);

@@ -8,7 +8,9 @@ COPY package*.json ./
 
 RUN npm install --quiet --production --no-progress --registry=${registry:-https://registry.npmjs.org} && \
     npm cache clean --force && \
-	npm install --save-dev webpack
+	npm install --save-dev webpack && \
+    npm install --save-dev nodemon && \
+    npm install express --save
 	
 COPY . .
 	

@@ -75,7 +75,9 @@ services:
     mongodb:
         image: mongo
             ports:
-                - "27017:27017"            
+                - "27017:27017"   
+            volumes:
+                - ./docker-web-mongo/data:/data/db
         networks:
             mynetwork:
                 aliases:

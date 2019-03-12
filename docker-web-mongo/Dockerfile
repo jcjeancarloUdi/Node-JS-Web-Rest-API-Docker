@@ -1,11 +1,24 @@
-FROM node
+FROM node:10
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-COPY . /app
-RUN npm install
+WORKDIR /home/node/app
 
-EXPOSE 8080
+COPY package*.json ./
 
-CMD ["npm", "start"]
+RUN npm install --quiet --production --no-progress --registry=${registry:-https://registry.npmjs.org} && \
+    npm cache clean --force && \
+	npm install --save-dev webpack && \
+    npm install --save-dev nodemon && \
+    npm install express --save && \
+    npm install mongose --save
+
+COPY . .
+	
+RUN chown -R node:node /home/node/app
+
+USER node
+
+EXPOSE 3000
+
+CMD [ "node", "server.js" ]
