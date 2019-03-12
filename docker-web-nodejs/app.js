@@ -6,6 +6,12 @@ var path = __dirname + '/views/';
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 router.use(function (req,res,next) {
   console.log("/" + req.method);
   next();
