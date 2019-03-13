@@ -7,7 +7,7 @@ services:
     restart: always
     privileged: true      
     ports:
-      - "1437:1433"
+      - "1433:1433"
     volumes:
         - /docker/vol/handson/docker-mssqldb/data:/var/opt/mssql
     environment:
@@ -26,7 +26,7 @@ services:
       context: ./docker-web-nodejs/
       dockerfile: Dockerfile
     ports:
-      - "8088:8080"
+      - "80:8080"
     restart: unless-stopped
     depends_on:
         - db
@@ -42,7 +42,7 @@ services:
       - "3000:3000"
     volumes:
         - .:/usr/src/app
-        - /usr/src/app/node_modules
+        - /docker/vol/handson/mssql-restapi-nodejs/node_modules:/usr/src/app/node_modules
     depends_on:
         - db
     healthcheck:
@@ -60,7 +60,7 @@ services:
         ports:
             - "27017:27017"   
         volumes:
-            - ./docker/vol/handson/docker-web-mongo/data:/data/db
+            - /docker/vol/handson/docker-web-mongo/data:/data/db
         networks:
             mynetwork:
                 aliases:
@@ -94,7 +94,26 @@ services:
         networks:
             mynetwork:
                 aliases:
-                    - fateapp.internal.teste.com                      
+                    - fateapi.internal.teste.com
+                    
+  fateweb:
+        build:
+            context: ./docker-fate-web/
+            dockerfile: Dockerfile
+        hostname: fateweb
+        container_name: fateweb
+        volumes:
+         - /docker/vol/handson/docker-fate-web/:/volume/fate-web
+        working_dir: /volume/fate-web
+        ports:
+            - "4200:4200"
+        depends_on:
+            - db
+            - fateapi
+        networks:
+            mynetwork:
+                aliases:
+                    - fateapp.internal.teste.com                  
 networks:
   mynetwork:
     driver: bridge            

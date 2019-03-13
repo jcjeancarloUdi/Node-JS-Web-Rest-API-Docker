@@ -1,4 +1,4 @@
-FROM microsoft/mssql-server-linux:latest
+FROM mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
 
 RUN apt-get update && apt-get install -y  \
 	curl \
@@ -21,7 +21,9 @@ RUN curl -L -o AdventureWorksDW2017.bak https://github.com/Microsoft/sql-server-
 
 WORKDIR /
 COPY /db-scripts/create-db.sql .
+COPY /db-scripts/create-table-scopus.sql .
 
 #RUN (sqlcmd -S localhost -U SA -P teste2017 -i create-db.sql)
+#RUN (sqlcmd -S localhost -U SA -P teste2017 -i create-table-scopus.sql)
 
 EXPOSE 1433
