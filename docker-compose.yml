@@ -16,7 +16,9 @@ services:
       TZ: "Brazil/East"
     healthcheck:
       test: sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-db.sql ||
-            sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-table.sql
+            sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-table.sql ||
+            sqlcmd -S db1.internal.teste.com -U SA -P teste2017 -i create-table-scopus.sql
+            
     networks:
       mynetwork:
         aliases:
@@ -84,7 +86,8 @@ services:
         build:
             context: ./docker-fate-api/
             dockerfile: Dockerfile
-        container_name: FateApp
+        hostname: fateapi
+        container_name: fateapi
         ports:
             - "8091:8091"
         volumes:
@@ -109,7 +112,6 @@ services:
             - "4200:4200"
         depends_on:
             - db
-            - fateapi
         networks:
             mynetwork:
                 aliases:

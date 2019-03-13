@@ -23,7 +23,4 @@ WORKDIR /
 COPY /db-scripts/create-db.sql .
 COPY /db-scripts/create-table-scopus.sql .
 
-#RUN (sqlcmd -S localhost -U SA -P teste2017 -i create-db.sql)
-#RUN (sqlcmd -S localhost -U SA -P teste2017 -i create-table-scopus.sql)
-
 EXPOSE 1433

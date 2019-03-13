@@ -409,6 +409,12 @@ networks:
         
         </div>
         
+		<h2 id="criando-containers-com-imagens-network">
+        <a name="criando-containers-com-imagens-network"></a>Criando outro container com uma imagem e network existente</h2>
+        
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -it --network=handson_mynetwork -p8082:4200 -h fateapp.internal.teste.com handson_fateweb /bin/bash
+        </code></pre></div></div>
+		
         </article>        
     </div>    
 </div>
