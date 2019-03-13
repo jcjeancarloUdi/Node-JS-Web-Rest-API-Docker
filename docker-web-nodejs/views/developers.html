@@ -168,7 +168,7 @@ networks:
         
         <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker images
         </code></pre></div></div>
-        
+        		
         <p>Será apresentado uma tabela no seu Terminal com:</p>
         
         <ul>
@@ -413,6 +413,59 @@ networks:
         <a name="criando-containers-com-imagens-network"></a>Criando outro container com uma imagem e network existente</h2>
         
         <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -it --network=handson_mynetwork -p8082:4200 -h fateapp.internal.teste.com handson_fateweb /bin/bash
+        </code></pre></div></div>
+
+		<h2 id="executando-docker-compose">
+        <a name="executando-docker-compose"></a>Como executar os comandos Docker Compose?</h2>
+        
+		<p>Para realizar o deploy de um arquivo .yml, pdoe se utilizar o comando docker deploy:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker deploy --compose-file docker-compose.yml app
+        </code></pre></div></div>
+		
+		<p>Mas para utilizar o Docker-Compose, podemos compilar o arquivo .yml com:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose build
+        </code></pre></div></div>
+		
+		<p>Para subir o service em modo daemon:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up -d
+        </code></pre></div></div>
+
+		<p>Pode subir o service em modo interativo:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up
+        </code></pre></div></div>
+
+		<p>Pode listar os serviços:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose ps
+        </code></pre></div></div>
+		
+		<p>Pode executar comandos dentro do serviço:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose exec <nombre-servicio> /bin/bash
+        </code></pre></div></div>
+
+		<p>Pode listar os logs:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose logs -f -t
+        </code></pre></div></div>
+
+		<p>Pode eliminar serviços:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose rm
+        </code></pre></div></div>		
+
+		<p>Para baixar e remover os serviços:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose down
+        </code></pre></div></div>
+
+		<p>Para baixar e remover os serviços, eliminando os volumes:</p>
+		
+        <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose down -v
         </code></pre></div></div>
 		
         </article>        
