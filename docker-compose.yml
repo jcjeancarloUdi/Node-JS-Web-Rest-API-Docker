@@ -29,6 +29,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:8080"
+    volumes:
+        - /docker/vol/handson/docker-web-nodejs:/home/node/app      
     restart: unless-stopped
     depends_on:
         - db
@@ -81,41 +83,7 @@ services:
             mynetwork:
                 aliases:
                     - webmongo1.internal.teste.com 
-
-  fateapi:
-        build:
-            context: ./docker-fate-api/
-            dockerfile: Dockerfile
-        hostname: fateapi
-        container_name: fateapi
-        ports:
-            - "8091:8091"
-        volumes:
-            - /docker/vol/handson/docker-fate-api/webapps:/volume/fate-api
-        depends_on:
-            - db            
-        networks:
-            mynetwork:
-                aliases:
-                    - fateapi.internal.teste.com
-                    
-  fateweb:
-        build:
-            context: ./docker-fate-web/
-            dockerfile: Dockerfile
-        hostname: fateweb
-        container_name: fateweb
-        volumes:
-         - /docker/vol/handson/docker-fate-web/:/volume/fate-web
-        working_dir: /volume/fate-web
-        ports:
-            - "4200:4200"
-        depends_on:
-            - db
-        networks:
-            mynetwork:
-                aliases:
-                    - fateapp.internal.teste.com                  
+                 
 networks:
   mynetwork:
     driver: bridge            
