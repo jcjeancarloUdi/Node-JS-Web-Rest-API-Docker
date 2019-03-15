@@ -43,11 +43,9 @@
     <br>
     <p>Lista de Serviços</p>    
     <ul class="list-group">
-        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://restapi1.internal.teste.com:3000/database/create-table/clientes" role="button">Adicionar-Dados-Clientes-SQL</a></li>
-        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://restapi1.internal.teste.com:3000/api/v1/clientes" role="button">Start-API-SQL</a></li>
-        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://webmongo1.internal.teste.com:8090/tasks" role="button">Web-Mongo</a></li>
-        <li class="list-group-item"><a class="btn btn-info btn-lg" href="http://fateapi.internal.teste.com:8091/swagger-api" role="button">Fate-API</a></li>
-		<li class="list-group-item"><a class="btn btn-info btn-lg" href="http://fateapp.internal.teste.com:4200" role="button">Fate-Web</a></li>
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="/api/database" role="button">Adicionar-Dados-Clientes-SQL</a></li>
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="/api/v1/clientes" role="button">Start-API-SQL</a></li>
+        <li class="list-group-item"><a class="btn btn-info btn-lg" href="/api/v1/tasks" role="button">Web-Mongo</a></li>
     </ul>    
     <br>
     <p><a class="btn btn-default btn-lg" href="/" role="button">Clique aqui para voltar</a>
@@ -56,7 +54,7 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
 <script>
-  axios.get('http://restapi1.internal.teste.com:3000/api/v1/clientes')
+  axios.get('/api/v1/clientes')
     .then(response => criaListaDinamica(response.data))
     .catch(error => console.log(error))
   const criaListaDinamica = ( clientes ) => {

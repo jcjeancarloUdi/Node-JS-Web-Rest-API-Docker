@@ -33,6 +33,18 @@ router.get("/clientes",function(req,res){
   res.sendFile(path + "clientes.html");
 });
 
+router.get("/api/database"), function(req,res){
+  res.sendFile("http://restapi1.internal.teste.com:3000/database/create-table/clientes");
+}
+
+router.get("/api/v1/clientes"), function(req,res){
+  res.sendFile("http://restapi1.internal.teste.com:3000/api/v1/clientes");
+}
+
+router.get("/api/v1/tasks"), function(req,res){
+  res.sendFile("http://webmongo1.internal.teste.com:8090/tasks");
+}
+
 app.use(express.static(path));
 app.use("/", router);
 

@@ -1,15 +1,16 @@
 version: '3'
+
 services:
   db:
     build:
       context: ./docker-mssqldb/
       dockerfile: Dockerfile
     restart: always
-    privileged: true      
+    privileged: true
     ports:
-      - "1433:1433"
+      - "1437:1433"
     volumes:
-        - /docker/vol/handson/docker-mssqldb/data:/var/opt/mssql
+        - ./docker-mssqldb/data:/var/opt/mssql
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: "teste2017"
@@ -22,7 +23,7 @@ services:
     networks:
       mynetwork:
         aliases:
-            - db1.internal.teste.com            
+            - db1.internal.teste.com    
   web:
     build:
       context: ./docker-web-nodejs/
@@ -30,14 +31,14 @@ services:
     ports:
       - "80:8080"
     volumes:
-        - /docker/vol/handson/docker-web-nodejs:/home/node/app      
+        - ./docker-web-nodejs:/home/node/app
     restart: unless-stopped
     depends_on:
         - db
     networks:
       mynetwork:
         aliases:
-            - web1.internal.teste.com 
+            - web1.internal.teste.com
   nodeapi:
     build:
       context: ./mssql-restapi-nodejs/
@@ -46,7 +47,7 @@ services:
       - "3000:3000"
     volumes:
         - .:/usr/src/app
-        - /docker/vol/handson/mssql-restapi-nodejs/node_modules:/usr/src/app/node_modules
+        - ./mssql-restapi-nodejs/node_modules:/usr/src/app/node_modules
     depends_on:
         - db
     healthcheck:
@@ -58,32 +59,31 @@ services:
     networks:
       mynetwork:
         aliases:
-            - restapi1.internal.teste.com 
+            - restapi1.internal.teste.com
   mongodb:
         image: mongo
         ports:
-            - "27017:27017"   
+            - "27017:27017"
         volumes:
-            - /docker/vol/handson/docker-web-mongo/data:/data/db
+            - ./docker-web-mongo/data:/data/db
         networks:
             mynetwork:
                 aliases:
-                    - mongodb1.internal.teste.com 
+                    - mongodb1.internal.teste.com
   webmongo1:
         build: 
             context: ./docker-web-mongo/
             dockerfile: Dockerfile
         volumes:
-            - /docker/vol/handson/docker-web-mongo/online_app:/app
+            - ./docker-web-mongo/online_app:/app
         ports:
             - "3001:3000"
         depends_on:
-            - "mongodb"      
+            - "mongodb"
         networks:
             mynetwork:
                 aliases:
-                    - webmongo1.internal.teste.com 
-                 
+                    - webmongo1.internal.teste.com
 networks:
   mynetwork:
-    driver: bridge            
+    driver: bridge
