@@ -12,6 +12,8 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "mssql": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
-  
 }

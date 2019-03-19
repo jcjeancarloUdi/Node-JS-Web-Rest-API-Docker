@@ -1,6 +1,6 @@
 
 ### para criar a imagem
-# docker build -t jcjeancarlo_dockerhub/nodejs-image-demo .
+# docker build -t docker-web-nodejs .
 
 ### para construir o container
-# docker run --name nodejs-image-demo -p 80:8080 -d jcjeancarlo_dockerhub/nodejs-image-demo 
+# docker run --name nodeweb -p 80:8080 -d docker-web-nodejs
