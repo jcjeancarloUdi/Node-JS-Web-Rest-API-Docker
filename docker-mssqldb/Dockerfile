@@ -21,6 +21,6 @@ RUN curl -L -o AdventureWorksDW2017.bak https://github.com/Microsoft/sql-server-
 
 WORKDIR /
 COPY /db-scripts/create-db.sql .
-COPY /db-scripts/create-table-scopus.sql .
+COPY /db-scripts/create-table.sql .
 
 EXPOSE 1433
