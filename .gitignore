@@ -1,2 +1,6 @@
 node_modules
 npm-debug.log
+/docker-fate-api
+/docker-fate-web
+*scopus*
+/docker-mssqldb/data/*
